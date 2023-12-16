@@ -1,14 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import authStore from "../Store/Auth";
 
 const Logout = () => {
 
-    const { logout } = useAuth0();
+    const { logout } = authStore();
 
 
 
     useEffect(() => {
         logout();
+        window.location.href = "/login";
     } , []);
 
 

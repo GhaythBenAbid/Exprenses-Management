@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import authStore from "../Store/Auth";
 
 
 const Login = () => {
 
-    const { login } = authStore();
+    const { login , isAuthenticated } = authStore();
 
     const [status, setStatus] = useState(true);
     const [email, setEmail] = useState('');
@@ -14,6 +14,10 @@ const Login = () => {
 
         setStatus(await login(email, password));
     }
+
+
+
+
 
 
     return (
