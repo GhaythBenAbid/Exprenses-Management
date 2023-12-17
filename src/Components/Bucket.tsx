@@ -1,13 +1,23 @@
-import ReactApexChart from "react-apexcharts";
-import useStore from "../Store/Counter";
 import SideBar from "../layout/SideBar";
 import ChartInterface from "../layout/Chart";
 import DataTable from "../layout/DataTable";
+import bucketStore from "../Store/Bucket";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import transactionStore from "../Store/Transaction";
 
 const Dashboard = () => {
 
+    const params = useParams();
+    const { id } = params as { id: string };
+    const { getSelectedBucket , bucket } = bucketStore();
 
-    const { count, decrement, increment } = useStore();
+    useEffect(() => {
+        getSelectedBucket(id);
+
+    }, []);
+    
+
 
 
     return (
@@ -20,7 +30,7 @@ const Dashboard = () => {
                     <div className="w-full mx-auto p-8 h-52 bg-emerald-500 rounded-xl heropattern-fourpointstars-gray-600/10">
                         
                         <h1 className="text-[#0B0D10] font-bold text-3xl">Current Expenses </h1>
-                        <h1 className="text-[#0B0D10] text-6xl font-bold mt-10">1800.00</h1>
+                        <h1 className="text-[#0B0D10] text-6xl font-bold mt-10">{bucket?.total} {bucket?.currency}</h1>
 
                     </div>
                     <div>

@@ -1,5 +1,3 @@
-import { nextui } from '@nextui-org/react';
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -11,9 +9,25 @@ export default {
   theme: {
     extend: {},
   },
+  /** @type {import('rippleui').Config} */
+	rippleui: {
+		themes: [
+			
+			{
+				themeName: "dark",
+				colorScheme: "dark",
+				colors: {
+					primary: "#10B981",
+				},
+			},
+		],
+	},
+
+
+
   darkMode: "media",
   plugins: [
-    nextui(),
+    require('rippleui'),
     require('tailwindcss-hero-patterns'),
 
   ]
