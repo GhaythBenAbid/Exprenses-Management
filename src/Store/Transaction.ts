@@ -11,8 +11,8 @@ interface Transaction {
     type: string;
     title: string;
     value: number;
-    Category: string;
-    Date: string;
+    category: string;
+    date: string;
     bucket: string;
 }
 
@@ -22,6 +22,7 @@ interface TransactionMethods {
     transactions: Transaction[];
     transaction: Transaction | null;
     getTransactions: (bucketid : string) => void;
+    addTransaction: (data: any) => void;
 
 
     
@@ -37,11 +38,12 @@ const transactionStore = create<TransactionMethods>(
                 const transactions = await pb.collection('transactions').getList(1, 50, {
                     filter: `bucket = '${bucketid}'`,
                 })
-
-                console.log(transactions.items);
-
                 set({ transactions: transactions.items });
             },
+            addTransaction: async (data : any) => {
+                const transaction = await pb.collection('transactions').create(data);
+                
+            }
             
         }), {
         name: 'tranaction-storage',

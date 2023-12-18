@@ -10,8 +10,8 @@ interface Bucket {
     id: string;
     title: string;
     owner: string;
-    total: string;
     currency: string;
+    total: number;
 }
 
 
@@ -40,8 +40,27 @@ const bucketStore = create<BucketMethods>(
             },
             getSelectedBucket: async (id: string) => {
                 const bucket = await pb.collection('buckets').getOne(id);
+
+                const transactions = await pb.collection('transactions').getList(1, 50, {
+                    filter: `bucket = '${id}'`,
+                })
+
+                let total = 0;
+                transactions.items.forEach((transaction) => {
+                    if (transaction.type === 'income') {
+                        total += transaction.value;
+                    } else {
+                        total -= transaction.value;
+                    }
+                });
+
+                bucket.total = total;
+
+
+
                 set({ bucket : bucket  });
-            }
+            },
+            
         }), {
         name: 'bucket-storage',
         getStorage: () => localStorage

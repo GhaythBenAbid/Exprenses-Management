@@ -1,12 +1,41 @@
 import { useParams } from "react-router-dom";
 import transactionStore from "../Store/Transaction";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import bucketStore from "../Store/Bucket";
 
 const DataTable = () => {
     const params = useParams();
     const { id } = params as { id: string };
 
-    const { getTransactions, transactions } = transactionStore();
+    const { getTransactions, transactions , addTransaction } = transactionStore();
+    const { getSelectedBucket } = bucketStore();
+
+
+    const [title , setTitle] = useState('');
+    const [value , setValue] = useState('');
+    const [category , setCategory] = useState('');
+    const [date , setDate] = useState('');
+    const [type , setType] = useState('income');
+
+
+
+    const handleAddTransaction = async () => {
+        const transaction = {
+            type : type,
+            title : title,
+            value : value,
+            category : category,
+            date : date,
+            bucket : id,
+        }
+
+        await addTransaction(transaction);
+        await getSelectedBucket(id);
+        await getTransactions(id);
+
+        document.getElementById('modal-1')?.click();
+
+    }
 
 
     useEffect(() => {
@@ -27,6 +56,76 @@ const DataTable = () => {
                     <button className="w-1/2 px-5 py-2 text-sm text-gray-800 transition-colors duration-200 bg-white border rounded-lg sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-white dark:border-gray-700">
                         Download all
                     </button>
+                    <label className="btn btn-primary" htmlFor="modal-1">Open Modal</label>
+                    <input className="modal-state" id="modal-1" type="checkbox" />
+                    <div className="modal">
+                        <label className="modal-overlay" htmlFor="modal-1"></label>
+                        <div className="modal-content flex flex-col gap-5 w-[500px]">
+                            <label htmlFor="modal-1" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                            <h2 className="text-xl">Add new transaction</h2>
+                            <div>
+                                <div className="flex flex-col">
+                                    <label htmlFor="title" className="text-sm">Type</label>
+                                    <select onChange={(e) => {setType(e.target.value);}}
+                                    className="select max-w-full">
+                                        <option value="income">Income</option>
+                                        <option value="expense">Expense</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label htmlFor="title" className="text-sm">Title</label>
+                                    <input
+                                    onChange={(e) => {setTitle(e.target.value);}}
+                                    type="text" id="title" className="input max-w-full my-2 input-bordered" placeholder="Title" />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label htmlFor="value" className="text-sm">Value</label>
+                                    <input
+                                    onChange={(e) => {setValue(e.target.value);}}
+                                    type="number" id="value" className="input max-w-full my-2 input-bordered" placeholder="Value" />
+                                </div>
+                                <div className="flex flex-col">
+
+                                    <label htmlFor="category" className="text-sm">Category</label>
+                                    <input
+                                    onChange={(e) => {setCategory(e.target.value);}}
+                                    type="text" id="category" className="input max-w-full my-2 input-bordered" placeholder="Category" />
+                                </div>
+                                <div className="flex flex-col">
+
+                                    <label htmlFor="date" className="text-sm">Date</label>
+                                    <input
+                                    onChange={(e) => {setDate(e.target.value);}}
+                                    type="date" id="date" 
+                                    className="input max-w-full my-2 input-bordered" placeholder="Date" />
+                                </div>
+                                
+
+
+
+                            </div>
+
+
+
+                            <div className="flex gap-3">
+                                <button className="btn btn-primary btn-block"
+                                onClick={
+                                    () => {
+                                        handleAddTransaction();
+                                    }
+                                }
+                                >Add</button>
+
+                                <button className="btn btn-block"
+                                onClick={() => {
+                                    document.getElementById('modal-1')?.click();
+                                }}
+                                >Cancel</button>
+                            </div>
+                        </div>
+                    </div>
 
 
                 </div>
@@ -76,7 +175,7 @@ const DataTable = () => {
 
                                                     <div className="flex items-center gap-x-2">
                                                         <div className="flex items-center justify-center w-8 h-8 text-emerald-500 bg-emerald-100 rounded-full dark:bg-gray-800">
-                                                            
+
                                                             {transaction.type === 'income' && (
                                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 text-green-500">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7-7m0 0l-7 7m7-7v18" />
@@ -100,9 +199,9 @@ const DataTable = () => {
                                                 {transaction.title}
                                             </td>
                                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{transaction.value}</td>
-                                            <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{transaction.Category}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{transaction.category}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                                {new Date(transaction.Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {new Date(transaction.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                             </td>
 
 
