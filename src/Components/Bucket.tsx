@@ -4,9 +4,8 @@ import DataTable from "../layout/DataTable";
 import bucketStore from "../Store/Bucket";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import transactionStore from "../Store/Transaction";
 
-const Dashboard = () => {
+const Bucket = () => {
 
     const params = useParams();
     const { id } = params as { id: string };
@@ -14,23 +13,23 @@ const Dashboard = () => {
 
     useEffect(() => {
         getSelectedBucket(id);
-        const obj = document.getElementById("value");
-        animateValue(obj, 0, bucket?.total, 1000);
+        // const obj = document.getElementById("value");
+        // animateValue(obj, 0, bucket?.total, 1000);
 
     }, []);
 
-    function animateValue(obj: any, start: any, end: any, duration: any) {
-        let startTimestamp: any = null;
-        const step = (timestamp: any) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
+    // function animateValue(obj: any, start: any, end: any, duration: any) {
+    //     let startTimestamp: any = null;
+    //     const step = (timestamp: any) => {
+    //         if (!startTimestamp) startTimestamp = timestamp;
+    //         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    //         obj.innerHTML = Math.floor(progress * (end - start) + start);
+    //         if (progress < 1) {
+    //             window.requestAnimationFrame(step);
+    //         }
+    //     };
+    //     window.requestAnimationFrame(step);
+    // }
 
 
 
@@ -46,7 +45,7 @@ const Dashboard = () => {
 
                         <h1 className="text-[#0B0D10] font-bold text-3xl">Current Expenses </h1>
                         <h1 className="text-[#0B0D10] text-6xl font-bold mt-10">
-                            <span id="value">{bucket?.total.toFixed(2)}</span> {bucket?.currency}</h1>
+                            <span >{bucket?.total.toFixed(2)}</span> {bucket?.currency}</h1>
 
                     </div>
                     <div>
@@ -75,4 +74,4 @@ const Dashboard = () => {
 }
 
 
-export default Dashboard;
+export default Bucket;

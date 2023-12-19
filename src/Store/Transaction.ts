@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import PocketBase from 'pocketbase';
 import { persist } from 'zustand/middleware';
 import authStore from './Auth';
+import bucketStore from './Bucket';
 
 const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL);
 
@@ -19,8 +20,10 @@ interface Transaction {
 
 
 interface TransactionMethods {
+    allTransactions: Transaction[];
     transactions: Transaction[];
     transaction: Transaction | null;
+    getAllTransactions: () => void;
     getTransactions: (bucketid : string) => void;
     addTransaction: (data: any) => void;
 
@@ -32,8 +35,29 @@ interface TransactionMethods {
 const transactionStore = create<TransactionMethods>(
     persist(
         (set) => ({
+            allTransactions: [],
             transaction: null,
             transactions: [],
+            getAllTransactions: async () => {
+
+                const buckets = bucketStore.getState().buckets;
+
+                let listeTransactions: any[] = [];
+                for (let i = 0 ; i < buckets.length ; i++ ) {
+                    const bucket = buckets[i];
+                    const transactions = await pb.collection('transactions').getList(1, 50, {
+                        filter: `bucket = '${bucket.id}'`,
+                    })
+
+                    listeTransactions = [...listeTransactions, ...transactions.items];
+
+                    
+                }
+
+
+                set({ allTransactions: listeTransactions });
+
+            },
             getTransactions: async (bucketid : string) => {
                 const transactions = await pb.collection('transactions').getList(1, 50, {
                     filter: `bucket = '${bucketid}'`,
@@ -42,7 +66,6 @@ const transactionStore = create<TransactionMethods>(
             },
             addTransaction: async (data : any) => {
                 const transaction = await pb.collection('transactions').create(data);
-                
             }
             
         }), {

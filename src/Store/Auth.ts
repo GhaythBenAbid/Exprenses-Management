@@ -49,7 +49,7 @@ const authStore = create<Auth>(
                 ).then((res) => {
                     set({ user: res.record });
                     set({ token: res.token });
-                    window.location.href = '/dashboard';
+                    window.location.href = '/';
 
                     return true;
                 }).catch(() => {

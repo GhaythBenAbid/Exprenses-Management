@@ -32,11 +32,30 @@ const bucketStore = create<BucketMethods>(
             buckets: [],
             getBuckets: async () => {
                 const user = await authStore.getState().user;
-                const buckets = await pb.collection('buckets').getList(1, 50, {
+                const bucketsData = await pb.collection('buckets').getList(1, 50, {
                     filter: `owner = '${user?.id}'`,
                 })
 
-                set({ buckets: buckets.items });
+                for (let i = 0 ; i < bucketsData.items.length ; i++ ) {
+                    const bucket = bucketsData.items[i];
+                    const transactions = await pb.collection('transactions').getList(1, 50, {
+                        filter: `bucket = '${bucket.id}'`,
+                    })
+
+                    let total = 0;
+                    transactions.items.forEach((transaction) => {
+                        if (transaction.type === 'income') {
+                            total += transaction.value;
+                        } else {
+                            total -= transaction.value;
+                        }
+                    });
+
+                    bucket.total = total.toFixed(2);
+                }
+
+                set({ buckets: bucketsData.items });
+
             },
             getSelectedBucket: async (id: string) => {
                 const bucket = await pb.collection('buckets').getOne(id);
@@ -55,6 +74,10 @@ const bucketStore = create<BucketMethods>(
                 });
 
                 bucket.total = total;
+
+                console.log(bucket);
+
+
 
 
 
