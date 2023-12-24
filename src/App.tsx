@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./Components/Login";
 import HomePage from "./Components/HomePage";
@@ -10,17 +10,15 @@ import Dashboard from "./Components/Dashboard";
 
 
 
-export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+export const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = authStore();
-      
+
   if (user) {
-    return children
+    return <React.Fragment>{children}</React.Fragment>;
   }
-    
-  return <Navigate to="/login" />
-}
 
-
+  return <Navigate to="/login" />;
+};
 
 const App = () => {
   
