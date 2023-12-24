@@ -27,6 +27,7 @@ interface Auth {
     logout: () => void;
     register: (data: any) => void;
     getUser: () => void;
+    updateProfileImage: (image: FormData) => void;
 }
 
 const authStore = create<Auth>(
@@ -72,6 +73,15 @@ const authStore = create<Auth>(
                 }).catch(() => {
                 });
             },
+            updateProfileImage: async (image: FormData) => {
+                const user = await authStore.getState().user;
+                await pb.collection('users').update(user?.id ?? '', {
+                    image,
+                }).then((res) => {
+                    console.log(res);
+                }).catch(() => {
+                });
+            }
         }),
         {
             name: 'auth-storage',

@@ -1,13 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import authStore from "../Store/Auth";
 import bucketStore from "../Store/Bucket";
 import SideBar from "../layout/SideBar";
 import transactionStore from "../Store/Transaction";
+import noData from './../assets/no_data.svg';
+
 
 
 const Dashboard = () => {
+
+    const [title, setTitle] = useState('');
+    const [currency, setCurrency] = useState('');
+
+
+
     const { user } = authStore();
-    const { buckets, getBuckets } = bucketStore();
+    const { buckets, getBuckets , addBucket } = bucketStore();
     const { allTransactions, getAllTransactions } = transactionStore();
 
 
@@ -15,6 +23,16 @@ const Dashboard = () => {
         getBuckets();
         getAllTransactions();
     }, []);
+
+
+    const handleAddBucket = async () => {
+        await addBucket({
+            title: title,
+            currency: currency,
+        });
+
+        await getBuckets();
+    }
 
 
 
@@ -34,10 +52,10 @@ const Dashboard = () => {
                         <div className="mt-12">
 
 
-                            <h1 className="text-4xl font-bold mb-5">Your Buckets</h1>
-                            <div className="grid grid-cols-2">
-                                {buckets?.length > 0 &&
-                                    buckets?.slice(0, 4).map((bucket) => (
+                            <h1 className="text-4xl text-primary font-bold mb-5">Your Buckets</h1>
+                            {buckets?.length > 0 ?
+                                <div className="grid grid-cols-2">
+                                    {buckets?.slice(0, 4).map((bucket) => (
                                         <div key={bucket.id} className=" h-[150px] text-[#0B0D10] p-5 mr-8 rounded-lg bg-emerald-500  hover:shadow-lg  hover:shadow-emerald-900 duration-300 ">
                                             <h1 className="uppercase font-bold text-2xl">{bucket.title}</h1>
                                             <h1 className="text-xl">{bucket.total} {bucket.currency}</h1>
@@ -46,11 +64,42 @@ const Dashboard = () => {
                                                 href={`/bucket/${bucket.id}`}
                                                 className=" font-bold  py-1 rounded-lg mt-4">View</a>
                                         </div>
-                                    ))
+                                    ))}
+                                </div>
+                                :
+                                <div className="text-center">
+
+                                    <img src={noData} className="mx-auto" width={350} alt="" />
+                                    <h1 className="text-primary font-bold my-2" >Add New Bucket</h1>
+                                    <label className="btn btn-primary" htmlFor="modal-1">Open Modal</label>
+                                    <input className="modal-state" id="modal-1" type="checkbox" />
+                                    <div className="modal">
+                                        <label className="modal-overlay" htmlFor="modal-1"></label>
+                                        <div className="modal-content w-[500px] flex flex-col gap-5">
+                                            <label htmlFor="modal-1" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                                            <h2>Title</h2>
+                                            <input type="text" onChange={(e) => {setTitle(e.target.value);}} className="input max-w-full input-bordered" placeholder="Title" />
+                                            
+                                            <h2>Currency</h2>
+                                            <input type="text" onChange={(e) => {setCurrency(e.target.value);}} className="input max-w-full input-bordered" placeholder="Currency" />
+
+                                            
+                                            <div className="flex gap-3">
+                                                <button onClick={() => {
+                                                    handleAddBucket();
+                                                }} className="btn btn-primary btn-block">Add Bucket</button>
+
+                                                <button className="btn btn-block">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
 
-                                }
-                            </div>
+
+
+
+                            }
 
 
 
@@ -58,7 +107,7 @@ const Dashboard = () => {
                         <div className="mt-12">
 
 
-                            <h1 className="text-4xl font-bold mb-5">Your Recent Transactions</h1>
+                            <h1 className="text-4xl font-bold mb-5 text-primary">Your Recent Transactions</h1>
                             <div className="flex">
                                 <div className="flex flex-col mt-6 w-full">
                                     <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">

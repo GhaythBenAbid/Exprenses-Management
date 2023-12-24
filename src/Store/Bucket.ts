@@ -21,6 +21,7 @@ interface BucketMethods {
     bucket: Bucket | null;
     getBuckets: () => void;
     getSelectedBucket: (id : string) => void;
+    addBucket: (data: any) => void;
     
 }
 
@@ -82,6 +83,11 @@ const bucketStore = create<BucketMethods>(
 
 
                 set({ bucket : bucket  });
+            },
+            addBucket: async (data: any) => {
+                const user = await authStore.getState().user;
+                data.owner = user?.id;
+                await pb.collection('buckets').create(data);
             },
             
         }), {

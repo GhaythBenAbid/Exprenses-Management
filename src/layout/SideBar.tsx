@@ -72,7 +72,7 @@ const SideBar = () => {
                     </div>
                     <div className="flex flex-col ">
                         <div className="w-14 h-14 my-3 overflow-hidden rounded-full ">
-                            <img src={user?.image} alt="Avatar" className="object-cover w-full h-full" />
+                            <img src={`https://eu.ui-avatars.com/api/?name=${user?.username}&size=250&background=random`} alt="Avatar" className="object-cover w-full h-full" />
                         </div>
                         <div>
                             <h4 className="font-bold">{user?.username}</h4>
